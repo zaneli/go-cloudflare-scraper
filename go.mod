@@ -1,11 +1,8 @@
-module github.com/cardigann/go-cloudflare-scrape
+module github.com/cardigann/go-cloudflare-scraper
 
 go 1.22.3
 
-require (
-	github.com/cardigann/go-cloudflare-scraper v0.0.0-20200425223932-91bd9b1006f2
-	github.com/robertkrimen/otto v0.4.0
-)
+require github.com/robertkrimen/otto v0.4.0
 
 require (
 	golang.org/x/text v0.4.0 // indirect
