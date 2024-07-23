@@ -1,15 +1,16 @@
 package scraper
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
 func TestTransport(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadFile("_examples/challenge.html")
+		b, err := os.ReadFile("_examples/challenge.html")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -34,7 +35,7 @@ func TestTransport(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = ioutil.ReadAll(res.Body)
+	_, err = io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		t.Fatal(err)

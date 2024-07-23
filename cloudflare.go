@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
@@ -20,7 +20,7 @@ const userAgent = `Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like 
 
 type Transport struct {
 	upstream http.RoundTripper
-	Cookies  http.CookieJar
+	cookies  http.CookieJar
 }
 
 func NewClient() (c *http.Client, err error) {
@@ -78,12 +78,12 @@ var passRegexp = regexp.MustCompile(`name="pass" value="(.+?)"`)
 func (t Transport) solveChallenge(resp *http.Response) (*http.Response, error) {
 	time.Sleep(time.Second * 4) // Cloudflare requires a delay before solving the challenge
 
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	resp.Body = ioutil.NopCloser(bytes.NewReader(b))
+	resp.Body = io.NopCloser(bytes.NewReader(b))
 
 	var params = make(url.Values)
 
@@ -121,7 +121,7 @@ func (t Transport) solveChallenge(resp *http.Response) (*http.Response, error) {
 	log.Printf("Requesting %s?%s", u.String(), params.Encode())
 	client := http.Client{
 		Transport: t.upstream,
-		Jar:       t.Cookies,
+		Jar:       t.cookies,
 	}
 
 	resp, err = client.Do(req)
